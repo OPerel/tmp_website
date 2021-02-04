@@ -117,5 +117,87 @@
         </a>
       </div>
     </main>
+
+    <script>
+      function createUUID(){
+        let dt = new Date().getTime();
+        const uuid = 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
+          const r = (dt + Math.random()*16)%16 | 0;
+          dt = Math.floor(dt/16);
+          return (c=='x' ? r :(r&0x3|0x8)).toString(16);
+        });
+        return uuid;
+      };
+
+      function createCookieExpiration(){
+        let now = new Date();
+        const time = now.getTime();
+        const expireTime = time+3600*1000*24*365*10;
+        now.setTime(expireTime);
+        return now.toUTCString();
+      };
+
+      function createPageHit(userId){
+        console.log('platform: ', navigator.platform);        
+        fetch('http://ip-api.com/json/')
+          .then(res => res.json())
+          .then(res => {
+            console.log('ip-api: ', res);
+            fetch('http://localhost:5000/newPageHit', {
+              method: 'post',
+              headers: {
+                'Content-Type': 'application/json'
+              },
+              body: JSON.stringify({
+                userId,
+                referrer: document.referrer,
+                platform: navigator.platform,
+                country: res.country,
+                city: res.city,
+                IP: res.query
+              })
+            })
+              .then(() => console.log('new page hit created'))
+              .catch(err => console.log('error creating page hit: ', err));
+          })
+          .catch(err => console.log('ip lookup error: ', err));
+      }
+
+      window.addEventListener('load', e => {
+        
+        console.log('e: ', e);
+        console.log('document.referrer: ', document.referrer);
+        const userCookie = document.cookie.split('; ').find(cookie => cookie.includes('OPUserId'));
+        if (userCookie) {
+          console.log('cookie found: ', userCookie);
+          const cookie = userCookie.split('=')[1];
+          fetch(`http://localhost:5000/uniqueUser?cookieId=${cookie}`)
+            .then(res => res.json())
+            .then(res => {
+              console.log('api res: ', res);
+              // createPageHit with res._id
+              createPageHit(res._id);
+            });
+        } else {
+          console.log('cookie not found. creating new unique user.');
+          const cookieId = createUUID();
+          document.cookie = `OPUserId=${cookieId}; expires=${createCookieExpiration()}`;
+          fetch('http://localhost:5000/newUniqueUser', {
+            method: 'post',
+            headers: {
+              'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ cookieId })
+          })
+            .then(res => res.json())
+            .then(res => {
+              console.log(res);
+              // createPageHit with res._id
+              createPageHit(res._id);
+            })
+            .catch(err => console.log('error creating new user', err));
+        }
+      })
+    </script>
   </body>
 </html>
