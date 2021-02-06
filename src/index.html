@@ -102,88 +102,20 @@
       <h2>Full Stack <span class="header-on-hover">
         <span class="header">Web Developer</span>
         <div class="rotating-wrapper">
-          <img src="./wheel.svg" alt="wheel of dhamma" class="rotating" width="20px" height="20px"/>
+          <img src="./assets/wheel.svg" alt="wheel of dhamma" class="rotating" width="20px" height="20px"/>
         </div>
       </span></h2>
       <div class="contact">
         <a href="mailto:oriperelman@gmail.com">
-          <img src="./mail.svg"/ alt="my email" width="40px" height="40px">
+          <img src="./assets/mail.svg" alt="my email" width="40px" height="40px"/>
         </a>
         <a href="https://github.com/OPerel" target="_blank" rel="noopener noreferrer">
-          <img src="./github.svg"/ alt="my github" width="40px" height="40px">
+          <img src="./assets/github.svg" alt="my github" width="40px" height="40px"/>
         </a>
         <a href="https://www.linkedin.com/in/ori-perelman-0144a5161/" target="_blank" rel="noopener noreferrer">
-          <img src="./linkedin.svg"/ alt="my linkedin" width="40px" height="40px">
+          <img src="./assets/linkedin.svg" alt="my linkedin" width="40px" height="40px"/>
         </a>
       </div>
     </main>
-
-    <script>
-      function createCookieExpiration(){
-        let now = new Date();
-        const time = now.getTime();
-        const expireTime = time+3600*1000*24*365*10;
-        now.setTime(expireTime);
-        return now.toUTCString();
-      };
-
-      function createPageHit(userId){       
-        fetch('http://ip-api.com/json/')
-          .then(res => res.json())
-          .then(res => {
-            console.log('ip-api: ', res);
-            fetch('http://localhost:5000/newPageHit', {
-              method: 'post',
-              headers: {
-                'Content-Type': 'application/json'
-              },
-              body: JSON.stringify({
-                userId,
-                referrer: document.referrer,
-                platform: navigator.platform,
-                country: res.country,
-                city: res.city,
-                IP: res.query
-              })
-            })
-              .then(res => res.json())
-              .then((res) => console.log('new page hit created: ', res))
-              .catch(err => console.log('error creating page hit: ', err));
-          })
-          .catch(err => console.log('ip lookup error: ', err));
-      }
-
-      window.addEventListener('load', e => {
-        console.log(process.env.API)
-        const userCookie = document.cookie.split('; ').find(cookie => cookie.includes('OPUserId'));
-        if (userCookie) {
-          console.log('cookie found: ', userCookie);
-          const userId = userCookie.split('=')[1];
-          fetch(`http://localhost:5000/uniqueUser?userId=${userId}`)
-            .then(res => res.json())
-            .then(res => {
-              console.log('api res: ', res);
-              // createPageHit with res._id
-              createPageHit(res._id);
-            });
-        } else {
-          console.log('cookie not found. creating new unique user.');
-          // create new unique user
-          fetch('http://localhost:5000/newUniqueUser', {
-            method: 'post',
-            headers: { 'Content-Type': 'application/json' }
-          })
-            .then(res => res.json())
-            .then(res => {
-              console.log(res);
-              // create the cookie with the user's _id 
-              document.cookie = `OPUserId=${res._id}; expires=${createCookieExpiration()}`;
-              // createPageHit with res._id
-              createPageHit(res._id);
-            })
-            .catch(err => console.log('error creating new user', err));
-        }
-      })
-    </script>
   </body>
 </html>
