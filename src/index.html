@@ -50,7 +50,8 @@
         min-height: 36px;
       }
       span.header-on-hover{
-        display: inline-block;
+        display: inline-flex;
+        justify-content: space-between;
         width: 8.5em;
         cursor: text;
       }
@@ -76,11 +77,11 @@
       }
       div.rotating-wrapper {
         display: none;
-        vertical-align: middle;
       }
       img.rotating {
         display: none;
         animation: rotate 7s linear 0s infinite;
+        vertical-align: middle;
       }
       @media only screen and (min-width: 410px) {
         body {
