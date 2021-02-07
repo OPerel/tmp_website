@@ -3,7 +3,6 @@ const HtmlWebpackPlugin = require('html-webpack-plugin');
 const path = require('path');
 
 module.exports = (env) => {
-  console.log('env in exports fun: ', env.production)
   return {
     mode: env.NODE_ENV,
     entry: './src/index.ts',
