@@ -10,7 +10,7 @@ const createCookieExpiration = (): string => {
 
 const createPageHit = async (userId: string): Promise<void> => {
   try {
-    const ipJson = await fetch('http://ip-api.com/json/');
+    const ipJson = await fetch(`https://ipgeolocation.abstractapi.com/v1/?api_key=${process.env.IP_API_KEY}`);
     const ipData = await ipJson.json();
 
     try {
@@ -25,7 +25,7 @@ const createPageHit = async (userId: string): Promise<void> => {
           platform: navigator.platform,
           country: ipData.country,
           city: ipData.city,
-          IP: ipData.query
+          IP: ipData.ip_address
         })
       });
     } catch (analyticApiErr) {

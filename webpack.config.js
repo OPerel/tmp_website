@@ -45,7 +45,8 @@ module.exports = (env) => {
 
       }),
       new webpack.EnvironmentPlugin({
-        API: env.production ? 'prod api tba' : 'http://localhost:5000',
+        API: 'http://localhost:5000',
+        IP_API_KEY: '14800dab06604488bf6eb906a875a7a9',
       })
     ],
     devServer: {
