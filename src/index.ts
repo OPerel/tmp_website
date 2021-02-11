@@ -29,12 +29,22 @@ const createPageHit = async (userId: string): Promise<void> => {
         })
       });
     } catch (analyticApiErr) {
-      console.warn(analyticApiErr)
+      saveClientErrToDb(analyticApiErr);
     }
 
   } catch (ipApiErr) {
-    console.warn(ipApiErr)
+    saveClientErrToDb(ipApiErr);
   }
+}
+
+const saveClientErrToDb = (newErr: Error) => {
+  fetch(`${API}/logErrors`, {
+    method: 'post',
+    headers: {
+      'Content-Type': 'application/json'
+    },
+    body: JSON.stringify(newErr)
+  })
 }
 
 window.addEventListener('load', e => {
@@ -46,6 +56,9 @@ window.addEventListener('load', e => {
       .then(res => {
         // createPageHit with res._id
         createPageHit(res._id);
+      })
+      .catch(err => {
+        saveClientErrToDb(err);
       });
   } else {
     // create new unique user
@@ -60,6 +73,8 @@ window.addEventListener('load', e => {
         // createPageHit with res._id
         createPageHit(res._id);
       })
-      .catch(err => console.warn(err));
+      .catch(err => {
+        saveClientErrToDb(err);
+      });
   }
 })
