@@ -24,6 +24,7 @@ const createPageHit = async (userId: string): Promise<void> => {
           referrer: document.referrer,
           platform: navigator.platform,
           country: ipData.country,
+          flagSVG: ipData.flag.svg,
           city: ipData.city,
           IP: ipData.ip_address
         })
