@@ -44,7 +44,7 @@ const saveClientErrToDb = (newErr: Error) => {
     headers: {
       'Content-Type': 'application/json'
     },
-    body: JSON.stringify(newErr)
+    body: JSON.stringify({ error: newErr.message })
   })
 }
 
